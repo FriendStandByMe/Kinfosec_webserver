@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/file_upload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <style>
+        #filebox {
+            height: 200px;
+            width: 500px;
+            background: lightgray;
+            margin-left: 20px;
+            display: table;
+        }
+
+        #upload-name {
+            width: 500px;
+            background: lightgray;
+            margin-left: 20px;
+        }
+
+        #dd {
+            display: table-cell;
+		    vertical-align: middle;
+		    text-align: center;
+	    }
+
+	    #container {
+	        margin: 20px;
+	    }
+    </style>
+</head>
+<body id="container">
+<h1>파일을 업로드 해주세요</h1>
+<hr>
+<h3>pickle 파일 또는 pdf 파일만 검색이 가능합니다.</h3>
+<form action="uploader" method="POST" enctype="multipart/form-data">
+    <input class="upload-name" id="upload-name" type="file" name="file"/>
+    <div class="filebox" id="filebox">
+        <span id="dd">drag & drop</span>
+    </div>
+    <br>
+    <div>
+        threshold : <input type="range" value="50" min="0" max="100" name="threshold" id="threshold_in">
+        <span id="threshold_out">0.5</span>
+        <script>
+            document.querySelector('#threshold_in').addEventListener('input',e=>{
+                document.querySelector('#threshold_out').innerHTML= e.target.value/100;
+            });
+        </script>
+        <br>
+        검색 최대 갯수(많을수록 느려집니다.) : <input type="range" value="50" min="1" max="100" name="limit" id="limit_in">
+        <span id="limit_out">50</span>
+        <script>
+            document.querySelector('#limit_in').addEventListener('input',e=>{
+                document.querySelector('#limit_out').innerHTML= e.target.value;
+            });
+        </script>
+    </div>
+    <button type="submit" class="btn btn-primary">검색</button>
+</form>
+<script>
+    var uploadBox = document.getElementById("filebox");
+    var uploadName = document.getElementById("upload-name");
+
+    /* 박스 안에 Drag 들어왔을 때 */
+    uploadBox.addEventListener('dragenter', function(e) {
+        console.log('dragenter');
+    });
+
+    /* 박스 안에 Drag를 하고 있을 때 */
+    uploadBox.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        console.log('dragover');
+
+        this.style.backgroundColor = 'gray';
+    });
+
+    /* 박스 밖으로 Drag가 나갈 때 */
+    uploadBox.addEventListener('dragleave', function(e) {
+        console.log('dragleave');
+
+        this.style.backgroundColor = 'lightgray';
+    });
+
+    /* 박스 안에서 Drag를 Drop했을 때 */
+    uploadBox.addEventListener('drop', function(e) {
+        e.preventDefault();
+
+        // console.log('drop');
+        this.style.backgroundColor = 'lightgray';
+
+        // console.dir(e.dataTransfer);
+
+        var data = e.dataTransfer.files[0];
+        if(e.dataTransfer.files.length != 1) {
+            alert("반드시 하나의 파일만 넣어주세요.");
+            return;
+        }
+        // console.dir(data);
+        uploadName.files = e.dataTransfer.files;
+        // console.log(uploadName.files);
+    });
+</script>
+</body>
+</html>
